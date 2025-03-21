@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'screen/homePage.dart'; // ✅ Vérifie bien que c'est "screen/" et non "screens/"
+import 'screen/homePage.dart';
+import 'screen/inscriptionPage.dart';
 
 void main() {
   runApp(const MyApp());
@@ -13,7 +14,12 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Mon App',
-      home: const HomePage(),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => const HomePage(),
+        '/inscription': (context) =>
+            const InscriptionPage(message: "Page d'inscription"),
+      },
     );
   }
 }

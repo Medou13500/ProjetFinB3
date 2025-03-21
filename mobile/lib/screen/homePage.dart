@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../screen/inscriptionPage.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -10,14 +11,11 @@ class HomePage extends StatelessWidget {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // ✅ Affichage du logo
           Image.asset(
             "assets/image/logoRunning.jpeg",
             width: 120,
           ),
           SizedBox(height: 20),
-
-
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 30),
             child: Text(
@@ -33,6 +31,7 @@ class HomePage extends StatelessWidget {
             ),
           ),
           SizedBox(height: 30),
+
           TextButton(
             style: TextButton.styleFrom(
               foregroundColor: Colors.black,
@@ -43,6 +42,7 @@ class HomePage extends StatelessWidget {
               ),
             ),
             onPressed: () {
+              Navigator.pushNamed(context, '/inscription');
             },
             child: Text(
               'Inscription',
@@ -60,9 +60,6 @@ class HomePage extends StatelessWidget {
                 borderRadius: BorderRadius.zero,
               ),
             ),
-            onPressed: () {
-
-            },
             child: Text(
               'Connexion',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
