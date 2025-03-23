@@ -31,7 +31,7 @@ class HomePage extends StatelessWidget {
             ),
           ),
           SizedBox(height: 30),
-
+          // ✅ Bouton Inscription corrigé
           TextButton(
             style: TextButton.styleFrom(
               foregroundColor: Colors.black,
@@ -42,7 +42,8 @@ class HomePage extends StatelessWidget {
               ),
             ),
             onPressed: () {
-              Navigator.pushNamed(context, '/inscription');
+              Navigator.pushNamed(
+                  context, '/inscription'); // ✅ Redirection par route nommée
             },
             child: Text(
               'Inscription',
@@ -50,7 +51,7 @@ class HomePage extends StatelessWidget {
             ),
           ),
           SizedBox(height: 15),
-
+          // ✅ Bouton Connexion
           TextButton(
             style: TextButton.styleFrom(
               foregroundColor: Colors.black,
@@ -60,6 +61,15 @@ class HomePage extends StatelessWidget {
                 borderRadius: BorderRadius.zero,
               ),
             ),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      InscriptionPage(message: "Page d'inscription"),
+                ),
+              );
+            },
             child: Text(
               'Connexion',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
