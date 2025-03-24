@@ -1,28 +1,20 @@
 import 'package:flutter/material.dart';
 
-class InscriptionPage extends StatelessWidget {
+class ConnexionPage extends StatelessWidget {
   final String message;
+  ConnexionPage({super.key, required this.message});
 
-  InscriptionPage({super.key, required this.message});
+  final _formKey = GlobalKey<FormState>();
 
-  final _formKey = GlobalKey<FormState>(); // preparation de l'etat du formulaire 
-
-  final TextEditingController nomController = TextEditingController();
-  final TextEditingController prenomController = TextEditingController();
-  final TextEditingController ageController = TextEditingController();
-  final TextEditingController poidsController = TextEditingController();
-  final TextEditingController tailleController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmPasswordController =
-      TextEditingController();
+  final TextEditingController motsPasseController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFF0074BD),
       body: Center(
-        child: SingleChildScrollView( 
+        child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Form(
             key: _formKey,
@@ -34,69 +26,55 @@ class InscriptionPage extends StatelessWidget {
                   width: 120,
                 ),
                 const SizedBox(height: 20),
-
-                _buildInputField(
-                  hintText: 'Nom',
-                  controller: nomController,
-                ),
-                const SizedBox(height: 12),
-
-                _buildInputField(
-                  hintText: 'Prénom',
-                  controller: prenomController,
-                ),
-                const SizedBox(height: 12),
-
-                _buildInputField(
-                  hintText: 'Âge',
-                  controller: ageController,
-                  keyboardType: TextInputType.number,
-                ),
-                const SizedBox(height: 12),
-
-                _buildInputField(
-                  hintText: 'Poids',
-                  controller: poidsController,
-                  keyboardType: TextInputType.number,
-                ),
-                const SizedBox(height: 12),
-
-                _buildInputField(
-                  hintText: 'Taille',
-                  controller: tailleController,
-                  keyboardType: TextInputType.number,
-                ),
-                const SizedBox(height: 12),
-
-                _buildInputField(
+                _buildConnexion(
                   hintText: 'Email',
                   controller: emailController,
                   keyboardType: TextInputType.emailAddress,
                 ),
                 const SizedBox(height: 12),
 
-                _buildInputField(
+                _buildConnexion(
                   hintText: 'Mot de passe',
-                  controller: passwordController,
-                  obscureText: true,
-                ),
-                const SizedBox(height: 12),
-
-                _buildInputField(
-                  hintText: 'Confirmation mot de passe',
-                  controller: confirmPasswordController,
+                  controller: motsPasseController,
                   obscureText: true,
                 ),
                 const SizedBox(height: 20),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.grey[300], 
+                    foregroundColor: Colors.black, 
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 40,
+                      vertical: 12,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(50), 
+                    ),
+                  ),
+                  onPressed: () {
+                   
+                    print('Mot de passe oublié ?');
+                  },
+                  child: const Text(
+                    'Mot de passe oublié ?',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
 
+                const SizedBox(height: 20),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.grey[300],
                     foregroundColor: Colors.black,
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 40, vertical: 12),
+                      horizontal: 40,
+                      vertical: 12,
+                    ),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(50), // ✅ Arrondi à 50
+                      borderRadius: BorderRadius.circular(50),
                     ),
                   ),
                   onPressed: () => _submitForm(context),
@@ -117,7 +95,7 @@ class InscriptionPage extends StatelessWidget {
     );
   }
 
-  Widget _buildInputField({
+  Widget _buildConnexion({
     required String hintText,
     required TextEditingController controller,
     TextInputType keyboardType = TextInputType.text,
@@ -184,15 +162,13 @@ class InscriptionPage extends StatelessWidget {
               if (value == null || value.isEmpty) {
                 return 'Ce champ est obligatoire';
               }
-              if (hintText == 'Email' && !value.contains('@')) {
+              if (hintText.toLowerCase().trim() == 'email' &&
+                  !value.contains('@')) {
                 return 'Entrez un email valide';
               }
-              if (hintText == 'Mot de passe' && value.length < 6) {
-                return 'Mot de passe trop court';
-              }
-              if (hintText == 'Confirmation mot de passe' &&
-                  value != passwordController.text) {
-                return 'Les mots de passe ne correspondent pas';
+              if (hintText.toLowerCase().trim() == 'mot de passe' &&
+                  value != 'motDePasseStocke') {
+                return 'Mot de passe incorrect';
               }
               return null;
             },
@@ -206,7 +182,7 @@ class InscriptionPage extends StatelessWidget {
   void _submitForm(BuildContext context) {
     if (_formKey.currentState!.validate()) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Formulaire soumis !')),
+        const SnackBar(content: Text('Connexion réussie !')),
       );
     }
   }

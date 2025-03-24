@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../screen/inscriptionPage.dart';
+import '../screen/ConnexionPage.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -36,41 +37,35 @@ class HomePage extends StatelessWidget {
             style: TextButton.styleFrom(
               foregroundColor: Colors.black,
               backgroundColor: Colors.grey[300],
-              fixedSize: Size(237, 50),
+              fixedSize: const Size(237, 50),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.zero,
               ),
             ),
             onPressed: () {
-              Navigator.pushNamed(
-                  context, '/inscription'); // ✅ Redirection par route nommée
+              Navigator.pushNamed(context, '/inscription');
             },
-            child: Text(
+            child: const Text(
               'Inscription',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
           ),
-          SizedBox(height: 15),
-          // ✅ Bouton Connexion
+
+          const SizedBox(height: 15),
+
           TextButton(
             style: TextButton.styleFrom(
               foregroundColor: Colors.black,
               backgroundColor: Colors.grey[300],
-              fixedSize: Size(237, 50),
+              fixedSize: const Size(237, 50),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.zero,
               ),
             ),
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) =>
-                      InscriptionPage(message: "Page d'inscription"),
-                ),
-              );
+              Navigator.pushNamed(context, '/connexion');
             },
-            child: Text(
+            child: const Text(
               'Connexion',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),

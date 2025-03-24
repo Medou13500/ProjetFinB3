@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'screen/homePage.dart';
 import 'screen/inscriptionPage.dart';
+import 'screen/ConnexionPage.dart';
 
 void main() {
   runApp(const MyApp());
@@ -19,6 +20,8 @@ class MyApp extends StatelessWidget {
         '/': (context) => const HomePage(),
         '/inscription': (context) =>
             InscriptionPage(message: "Page d'inscription"),
+        '/connexion': (context) =>
+          ConnexionPage(message:"Page de connexion"),
       },
     );
   }
