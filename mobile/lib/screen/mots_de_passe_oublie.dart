@@ -1,13 +1,24 @@
 import 'package:flutter/material.dart';
 
-class ConnexionPage extends StatelessWidget {
+class MotsDePasseOublie extends StatefulWidget {
   final String message;
-  ConnexionPage({super.key, required this.message});
+  const MotsDePasseOublie({super.key, required this.message});
 
+  @override
+  State<MotsDePasseOublie> createState() => _MotsDePasseOublieState();
+}
+
+class _MotsDePasseOublieState extends State<MotsDePasseOublie> {
   final _formKey = GlobalKey<FormState>();
+  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController confirmPasswordController = TextEditingController();
 
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController motsPasseController = TextEditingController();
+  @override
+  void dispose() {
+    passwordController.dispose();
+    confirmPasswordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,15 +37,15 @@ class ConnexionPage extends StatelessWidget {
                   width: 120,
                 ),
                 const SizedBox(height: 20),
-                _buildConnexion(
-                  hintText: 'Email',
-                  controller: emailController,
-                  keyboardType: TextInputType.emailAddress,
+                _buildInputField(
+                  hintText: 'Mot de passe',
+                  controller: passwordController,
+                  obscureText: true,
                 ),
                 const SizedBox(height: 12),
-                _buildConnexion(
-                  hintText: 'Mot de passe',
-                  controller: motsPasseController,
+                _buildInputField(
+                  hintText: 'Confirmation mot de passe',
+                  controller: confirmPasswordController,
                   obscureText: true,
                 ),
                 const SizedBox(height: 20),
@@ -42,36 +53,7 @@ class ConnexionPage extends StatelessWidget {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.grey[300],
                     foregroundColor: Colors.black,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 40,
-                      vertical: 12,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(50),
-                    ),
-                  ),
-                onPressed: () {
-                  print('Mot de passe oublié ?');
-                  Navigator.pushNamed(context, '/mdpOublie');
-                },
-
-                  child: const Text(
-                    'Mot de passe oublié ?',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 20),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.grey[300],
-                    foregroundColor: Colors.black,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 40,
-                      vertical: 12,
-                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(50),
                     ),
@@ -94,7 +76,7 @@ class ConnexionPage extends StatelessWidget {
     );
   }
 
-  Widget _buildConnexion({
+  Widget _buildInputField({
     required String hintText,
     required TextEditingController controller,
     TextInputType keyboardType = TextInputType.text,
@@ -118,36 +100,22 @@ class ConnexionPage extends StatelessWidget {
             decoration: InputDecoration(
               hintText: hintText,
               isDense: true,
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 15,
-                vertical: 8,
-              ),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(25),
-                borderSide: const BorderSide(
-                  color: Colors.transparent,
-                ),
+                borderSide: const BorderSide(color: Colors.transparent),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(25),
-                borderSide: const BorderSide(
-                  color: Colors.blue,
-                  width: 1.5,
-                ),
+                borderSide: const BorderSide(color: Colors.blue, width: 1.5),
               ),
               errorBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(25),
-                borderSide: const BorderSide(
-                  color: Colors.red,
-                  width: 1.0,
-                ),
+                borderSide: const BorderSide(color: Colors.red, width: 1.0),
               ),
               focusedErrorBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(25),
-                borderSide: const BorderSide(
-                  color: Colors.red,
-                  width: 1.0,
-                ),
+                borderSide: const BorderSide(color: Colors.red, width: 1.0),
               ),
               filled: true,
               fillColor: Colors.grey[300],
@@ -161,13 +129,9 @@ class ConnexionPage extends StatelessWidget {
               if (value == null || value.isEmpty) {
                 return 'Ce champ est obligatoire';
               }
-              if (hintText.toLowerCase().trim() == 'email' &&
-                  !value.contains('@')) {
-                return 'Entrez un email valide';
-              }
-              if (hintText.toLowerCase().trim() == 'mot de passe' &&
-                  value != 'motDePasseStocke') {
-                return 'Mot de passe incorrect';
+              if (hintText.toLowerCase().contains('confirmation') &&
+                  value != passwordController.text) {
+                return 'Les mots de passe ne correspondent pas';
               }
               return null;
             },
@@ -181,7 +145,7 @@ class ConnexionPage extends StatelessWidget {
   void _submitForm(BuildContext context) {
     if (_formKey.currentState!.validate()) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Connexion réussie !')),
+        const SnackBar(content: Text('Formulaire soumis !')),
       );
     }
   }
