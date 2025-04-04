@@ -22,7 +22,7 @@ class ConnexionPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Image.asset(
-                  "assets/image/logoRunning.jpeg",
+                  "assets/image/running.png",
                   width: 120,
                 ),
                 const SizedBox(height: 20),
@@ -32,7 +32,6 @@ class ConnexionPage extends StatelessWidget {
                   keyboardType: TextInputType.emailAddress,
                 ),
                 const SizedBox(height: 12),
-
                 _buildConnexion(
                   hintText: 'Mot de passe',
                   controller: motsPasseController,
@@ -41,18 +40,17 @@ class ConnexionPage extends StatelessWidget {
                 const SizedBox(height: 20),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.grey[300], 
-                    foregroundColor: Colors.black, 
+                    backgroundColor: Colors.grey[300],
+                    foregroundColor: Colors.black,
                     padding: const EdgeInsets.symmetric(
                       horizontal: 40,
                       vertical: 12,
                     ),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(50), 
+                      borderRadius: BorderRadius.circular(50),
                     ),
                   ),
                   onPressed: () {
-                   
                     print('Mot de passe oublié ?');
                   },
                   child: const Text(
@@ -63,7 +61,6 @@ class ConnexionPage extends StatelessWidget {
                     ),
                   ),
                 ),
-
                 const SizedBox(height: 20),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(

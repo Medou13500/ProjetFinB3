@@ -30,7 +30,7 @@ class InscriptionPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Image.asset(
-                  "assets/image/logoRunning.jpeg",
+                  "assets/image/running.png",
                   width: 120,
                 ),
                 const SizedBox(height: 20),
