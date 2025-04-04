@@ -18,6 +18,5 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-
   assets:
-    - assets/image/logoRunning.jpeg
+    - assets/image/running.png
