@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'screen/homePage.dart';
 import 'screen/inscriptionPage.dart';
 import 'screen/ConnexionPage.dart';
+import 'screen/mots_de_passe_oublie.dart';
 
 void main() {
   runApp(const MyApp());
@@ -22,6 +23,8 @@ class MyApp extends StatelessWidget {
             InscriptionPage(message: "Page d'inscription"),
         '/connexion': (context) =>
           ConnexionPage(message:"Page de connexion"),
+         '/mdpOublie': (context) =>
+             MotsDePasseOublie(message: "Page de mot de passe oublié")
       },
     );
   }
