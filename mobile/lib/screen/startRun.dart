@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'runReel.dart';
 
 class StartRun extends StatelessWidget {
   final String email;
@@ -14,7 +15,6 @@ class StartRun extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Logo et bouton historique
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -33,21 +33,16 @@ class StartRun extends StatelessWidget {
                     ),
                   ),
                   onPressed: () {
-                    // TODO: Historique de course
+                    // Historique de course (à implémenter)
                   },
                   child: const Text(
                     'Historique de course',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ),
               ],
             ),
-
             const SizedBox(height: 50),
-
-            // Message de bienvenue
             Text(
               "Bienvenue $email",
               style: const TextStyle(
@@ -55,10 +50,7 @@ class StartRun extends StatelessWidget {
                 color: Colors.white,
               ),
             ),
-
             const SizedBox(height: 40),
-
-            // Bouton Commencer la course
             Center(
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
@@ -71,7 +63,10 @@ class StartRun extends StatelessWidget {
                   ),
                 ),
                 onPressed: () {
-                  // TODO: Action démarrer course
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const RunReel()),
+                  );
                 },
                 child: const Text(
                   'Commencer la course',
@@ -81,7 +76,7 @@ class StartRun extends StatelessWidget {
                   ),
                 ),
               ),
-            ),
+            )
           ],
         ),
       ),
