@@ -4,7 +4,6 @@ import '../screen/ConnexionPage.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,7 +31,6 @@ class HomePage extends StatelessWidget {
             ),
           ),
           SizedBox(height: 30),
-          // ✅ Bouton Inscription corrigé
           TextButton(
             style: TextButton.styleFrom(
               foregroundColor: Colors.black,

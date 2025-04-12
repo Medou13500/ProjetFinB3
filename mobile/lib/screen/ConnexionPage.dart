@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../screen/startRun.dart';
 
 class ConnexionPage extends StatelessWidget {
   final String message;
@@ -50,11 +51,9 @@ class ConnexionPage extends StatelessWidget {
                       borderRadius: BorderRadius.circular(50),
                     ),
                   ),
-                onPressed: () {
-                  print('Mot de passe oublié ?');
-                  Navigator.pushNamed(context, '/mdpOublie');
-                },
-
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/mdpOublie');
+                  },
                   child: const Text(
                     'Mot de passe oublié ?',
                     style: TextStyle(
@@ -124,9 +123,7 @@ class ConnexionPage extends StatelessWidget {
               ),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(25),
-                borderSide: const BorderSide(
-                  color: Colors.transparent,
-                ),
+                borderSide: BorderSide.none,
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(25),
@@ -165,10 +162,6 @@ class ConnexionPage extends StatelessWidget {
                   !value.contains('@')) {
                 return 'Entrez un email valide';
               }
-              if (hintText.toLowerCase().trim() == 'mot de passe' &&
-                  value != 'motDePasseStocke') {
-                return 'Mot de passe incorrect';
-              }
               return null;
             },
           ),
@@ -180,8 +173,13 @@ class ConnexionPage extends StatelessWidget {
 
   void _submitForm(BuildContext context) {
     if (_formKey.currentState!.validate()) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Connexion réussie !')),
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => StartRun(
+            email: emailController.text,
+          ),
+        ),
       );
     }
   }
