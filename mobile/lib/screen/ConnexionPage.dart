@@ -1,5 +1,6 @@
+// connexionPage.dart
 import 'package:flutter/material.dart';
-import '../screen/startRun.dart';
+import 'start_run.dart';
 
 class ConnexionPage extends StatelessWidget {
   final String message;

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'startRun.dart';
+import 'start_run.dart';
 
 class InscriptionPage extends StatelessWidget {
   final String message;
