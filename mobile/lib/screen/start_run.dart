@@ -27,7 +27,7 @@ class _StartRunState extends State<StartRun> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Image.asset("assets/image/logoRunning.jpeg", width: 120),
+                Image.asset("assets/image/running.png", width: 120),
                 TextButton(
                   style: TextButton.styleFrom(
                     backgroundColor: Colors.grey[300],

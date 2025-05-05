@@ -54,7 +54,7 @@ class _RunReelState extends State<RunReel> {
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
         child: Column(
           children: [
-            Image.asset("assets/image/logoRunning.jpeg", width: 120),
+            Image.asset("assets/image/running.png", width: 120),
             const SizedBox(height: 30),
 
             // Chrono & calories
