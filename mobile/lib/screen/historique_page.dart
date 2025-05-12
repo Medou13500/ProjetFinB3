@@ -3,7 +3,6 @@ import 'run_history.dart';
 
 class HistoriquePage extends StatelessWidget {
   final List<RunHistory> historiques;
-
   const HistoriquePage({super.key, required this.historiques});
 
   @override
@@ -15,29 +14,22 @@ class HistoriquePage extends StatelessWidget {
       ),
       body: historiques.isEmpty
           ? const Center(
-              child: Text(
-                "Aucune course enregistrée pour le moment.",
-                style: TextStyle(fontSize: 16),
-              ),
+              child: Text("Aucune course enregistrée.",
+                  style: TextStyle(fontSize: 16)),
             )
           : ListView.builder(
               itemCount: historiques.length,
               itemBuilder: (_, i) {
-                final run = historiques[i];
+                final r = historiques[i];
                 return Card(
                   margin:
                       const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
                   child: ListTile(
                     leading: const Icon(Icons.directions_run),
-                    title: Text("Durée : ${run.duration}"),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text("Calories : ${run.calories} kcal"),
-                        Text("Vitesse max : ${run.vitesseMax.toStringAsFixed(1)} km/h"),
-                        Text("Vitesse moy : ${run.vitesseMoy.toStringAsFixed(1)} km/h"),
-                      ],
-                    ),
+                    title: Text("Durée : ${r.duration}"),
+                    subtitle: Text(
+                        "Calories : ${r.calories} kcal\nVitesse max : ${r.vitesseMax.toStringAsFixed(1)} km/h\n"
+                        "Vitesse moy : ${r.vitesseMoy.toStringAsFixed(1)} km/h"),
                   ),
                 );
               },

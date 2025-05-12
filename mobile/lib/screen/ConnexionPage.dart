@@ -1,6 +1,5 @@
-// connexionPage.dart
 import 'package:flutter/material.dart';
-import 'start_run.dart';
+import 'package:mobile/screen/start_run.dart'; // Assurez-vous que le chemin d'importation est correct
 
 class ConnexionPage extends StatelessWidget {
   final String message;
@@ -23,10 +22,7 @@ class ConnexionPage extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Image.asset(
-                  "assets/image/running.png",
-                  width: 120,
-                ),
+                Image.asset("assets/image/running.png", width: 120),
                 const SizedBox(height: 20),
                 _buildConnexion(
                   hintText: 'Email',
@@ -57,10 +53,7 @@ class ConnexionPage extends StatelessWidget {
                   },
                   child: const Text(
                     'Mot de passe oublié ?',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -128,24 +121,15 @@ class ConnexionPage extends StatelessWidget {
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(25),
-                borderSide: const BorderSide(
-                  color: Colors.blue,
-                  width: 1.5,
-                ),
+                borderSide: const BorderSide(color: Colors.blue, width: 1.5),
               ),
               errorBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(25),
-                borderSide: const BorderSide(
-                  color: Colors.red,
-                  width: 1.0,
-                ),
+                borderSide: const BorderSide(color: Colors.red, width: 1.0),
               ),
               focusedErrorBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(25),
-                borderSide: const BorderSide(
-                  color: Colors.red,
-                  width: 1.0,
-                ),
+                borderSide: const BorderSide(color: Colors.red, width: 1.0),
               ),
               filled: true,
               fillColor: Colors.grey[300],
@@ -177,9 +161,7 @@ class ConnexionPage extends StatelessWidget {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => StartRun(
-            email: emailController.text,
-          ),
+          builder: (context) => StartRun(email: emailController.text),
         ),
       );
     }

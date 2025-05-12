@@ -1,4 +1,7 @@
+// settings.gradle (niveau racine du projet)
+
 pluginManagement {
+    // Charger le chemin du SDK Flutter depuis le fichier local.properties
     def flutterSdkPath = {
         def properties = new Properties()
         file("local.properties").withInputStream { properties.load(it) }
@@ -7,19 +10,20 @@ pluginManagement {
         return flutterSdkPath
     }()
 
+    // Inclure Flutter dans les builds Gradle
     includeBuild("$flutterSdkPath/packages/flutter_tools/gradle")
 
     repositories {
-        google()
-        mavenCentral()
-        gradlePluginPortal()
+        google()  // Dépôt Google pour récupérer les dépendances Android
+        mavenCentral()  // Dépôt Maven Central pour d'autres dépendances
+        gradlePluginPortal()  // Dépôt pour récupérer des plugins Gradle
     }
 }
 
 plugins {
-    id "dev.flutter.flutter-plugin-loader" version "1.0.0"
-    id "com.android.application" version "8.1.0" apply false
-    id "org.jetbrains.kotlin.android" version "1.8.22" apply false
+    id "dev.flutter.flutter-plugin-loader" version "1.0.0"  // Plugin Flutter pour Gradle
+    id "com.android.application" version "8.6.0" apply false  // Mise à jour vers AGP 8.6.0
+    id "org.jetbrains.kotlin.android" version "1.8.22" apply false  // Version Kotlin pour Android
 }
 
-include ":app"
+include ":app"  // Inclure le module 'app' du projet

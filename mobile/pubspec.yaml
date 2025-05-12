@@ -1,22 +1,17 @@
 name: mobile
 description: Un projet Flutter
 
-publish_to: "none"
-
-environment:
-  sdk: ">=3.0.0 <4.0.0"
-
 dependencies:
   flutter:
     sdk: flutter
-
+  flutter_map: ^4.0.0
+  latlong2: ^0.8.1
+  geolocator: ^14.0.0
   cupertino_icons: ^1.0.2
 
-dev_dependencies:
-  flutter_test:
-    sdk: flutter
-
 flutter:
-  uses-material-design: true
   assets:
     - assets/image/running.png
+
+environment:
+  sdk: "^3.7.0"

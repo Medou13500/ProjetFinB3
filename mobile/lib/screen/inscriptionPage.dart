@@ -26,35 +26,44 @@ class InscriptionPage extends StatelessWidget {
                 Image.asset("assets/image/running.png", width: 120),
                 const SizedBox(height: 20),
                 _buildInputField(
-                    hintText: 'Email',
-                    controller: emailController,
-                    keyboardType: TextInputType.emailAddress),
+                  hintText: 'Email',
+                  controller: emailController,
+                  keyboardType: TextInputType.emailAddress,
+                ),
                 const SizedBox(height: 12),
                 _buildInputField(
-                    hintText: 'Mot de passe',
-                    controller: passwordController,
-                    obscureText: true),
+                  hintText: 'Mot de passe',
+                  controller: passwordController,
+                  obscureText: true,
+                ),
                 const SizedBox(height: 12),
                 _buildInputField(
-                    hintText: 'Confirmation mot de passe',
-                    controller: confirmPasswordController,
-                    obscureText: true),
+                  hintText: 'Confirmation mot de passe',
+                  controller: confirmPasswordController,
+                  obscureText: true,
+                ),
                 const SizedBox(height: 20),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.grey[300],
                     foregroundColor: Colors.black,
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 40, vertical: 12),
+                      horizontal: 40,
+                      vertical: 12,
+                    ),
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(50)),
+                      borderRadius: BorderRadius.circular(50),
+                    ),
                   ),
                   onPressed: () => _submitForm(context),
-                  child: const Text('Envoyer',
-                      style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black)),
+                  child: const Text(
+                    'Envoyer',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -81,20 +90,27 @@ class InscriptionPage extends StatelessWidget {
             keyboardType: keyboardType,
             obscureText: obscureText,
             style: const TextStyle(
-                color: Colors.black, fontSize: 14, fontWeight: FontWeight.bold),
+              color: Colors.black,
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+            ),
             decoration: InputDecoration(
               hintText: hintText,
               isDense: true,
-              contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
-              border:
-                  OutlineInputBorder(borderRadius: BorderRadius.circular(25)),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 15,
+                vertical: 8,
+              ),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(25),
+              ),
               filled: true,
               fillColor: Colors.grey[300],
               hintStyle: const TextStyle(
-                  color: Colors.black,
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold),
+                color: Colors.black,
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+              ),
             ),
             validator: (value) {
               if (value == null || value.isEmpty)
