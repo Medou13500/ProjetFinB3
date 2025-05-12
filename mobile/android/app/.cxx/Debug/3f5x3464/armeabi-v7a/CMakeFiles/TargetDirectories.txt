@@ -1,0 +1,2 @@
+/Users/mehdy/Documents/ProjetB3/mobile/android/app/.cxx/Debug/3f5x3464/armeabi-v7a/CMakeFiles/edit_cache.dir
+/Users/mehdy/Documents/ProjetB3/mobile/android/app/.cxx/Debug/3f5x3464/armeabi-v7a/CMakeFiles/rebuild_cache.dir
