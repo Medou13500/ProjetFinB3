@@ -1,6 +1,9 @@
 name: mobile
 description: Un projet Flutter
 
+environment:
+  sdk: ">=3.7.0 <4.0.0"
+
 dependencies:
   flutter:
     sdk: flutter
@@ -10,8 +13,6 @@ dependencies:
   cupertino_icons: ^1.0.2
 
 flutter:
+  uses-material-design: true
   assets:
     - assets/image/running.png
-
-environment:
-  sdk: "^3.7.0"

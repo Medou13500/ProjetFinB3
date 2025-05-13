@@ -4,7 +4,6 @@ import 'dart:math' as math show sin;
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:geolocator/geolocator.dart';
 import 'run_history.dart';
 
 class RunReel extends StatefulWidget {
@@ -17,65 +16,62 @@ class RunReel extends StatefulWidget {
 class _RunReelState extends State<RunReel> {
   late Timer _timer;
   final _rand = Random();
-  final MapController _mapController = MapController(); // Contrôle de la carte
+  final MapController _mapController = MapController();
 
   int _sec = 0;
   int _cal = 0;
   double _vMax = 0, _vAvg = 0;
 
-  LatLng _pos = LatLng(
-    43.5287,
-    5.4456,
-  ); // Position de départ (Aix-en-Provence !)
-  List<LatLng> _simulatedPath = []; // Trajet simulé
-  List<LatLng> _visitedPath = []; // Chemin parcouru
+  LatLng _pos = LatLng(43.5287, 5.4456); // Aix-en-Provence
+  List<LatLng> _simulatedPath = [];
+  List<LatLng> _visitedPath = [];
   int _pathIndex = 0;
 
   @override
   void initState() {
     super.initState();
-    _startTimer(); // Lance le chronomètre
-    _generateSimulatedPath(); // Génére un faux parcours
-    _startSimulation(); // Commence à simuler les déplacements
+    _generateSimulatedPath();
+    _visitedPath.add(_pos);
+    _startTimer();
+    _startSimulation();
   }
 
-  //!Chronomètre et mise à jour des valeurs simulées (calories, vitesses)
   void _startTimer() {
     _timer = Timer.periodic(const Duration(seconds: 1), (_) {
       if (!mounted) return;
       setState(() {
-        _sec++; // 1 seconde de plus
-        if (_sec % 2 == 0) _cal++; // Calories toutes les 2 secondes
-        _vMax = 8 + _rand.nextDouble() * 6; // Vitesse max aléatoire
-        _vAvg = 5 + math.sin(_sec / 10) * 1.5; // Vitesse moyenne ondulée
+        _sec++;
+        if (_sec % 2 == 0) _cal++;
+        _vMax = 8 + _rand.nextDouble() * 6;
+        _vAvg = 5 + math.sin(_sec / 10) * 1.5;
       });
     });
   }
 
-  //! Crée un chemin fictif de 20 km
   void _generateSimulatedPath() {
     _simulatedPath = List.generate(4000, (i) {
-      final d = i * 0.00005; // ~5m par étape
+      final d = i * 0.00005;
       return LatLng(_pos.latitude + d, _pos.longitude + d);
     });
   }
 
-  // ! Simule le déplacement du coureur toutes les 0.5s et recentre la carte
   void _startSimulation() {
     Timer.periodic(const Duration(milliseconds: 500), (timer) {
       if (!mounted || _pathIndex >= _simulatedPath.length) {
-        timer.cancel(); // Stoppe la simulation à la fin du parcours
+        timer.cancel();
         return;
       }
-      setState(() {
-        _pos = _simulatedPath[_pathIndex++]; // Avance sur le parcours
-        _visitedPath.add(_pos); // Ajoute au chemin parcouru
-        _mapController.move(_pos, _mapController.zoom); // Recentre la carte
-      });
+
+      final nextPos = _simulatedPath[_pathIndex++];
+      _pos = nextPos;
+      _visitedPath.add(_pos);
+
+      _mapController.move(_pos, 15.0); // ✅ Zoom fixe
+
+      if (mounted) setState(() {});
     });
   }
 
-  //! Formate les secondes en HH:MM:SS
   String _t(int n) => n.toString().padLeft(2, '0');
   String _time() {
     final h = _sec ~/ 3600, m = (_sec % 3600) ~/ 60, s = _sec % 60;
@@ -84,7 +80,7 @@ class _RunReelState extends State<RunReel> {
 
   @override
   void dispose() {
-    _timer.cancel(); // Stoppe le timer quand on quitte l'écran
+    _timer.cancel();
     super.dispose();
   }
 
@@ -98,13 +94,9 @@ class _RunReelState extends State<RunReel> {
           child: Column(
             children: [
               Center(
-                child: Image.asset(
-                  "assets/image/running.png",
-                  width: 100,
-                ), // Illustration en haut
+                child: Image.asset("assets/image/running.png", width: 100),
               ),
               const SizedBox(height: 30),
-              //! Temps écoulé et calories brûlées
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
@@ -127,7 +119,6 @@ class _RunReelState extends State<RunReel> {
                 ],
               ),
               const SizedBox(height: 30),
-              // ! Vitesse max / moyenne
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
@@ -144,7 +135,6 @@ class _RunReelState extends State<RunReel> {
                 ],
               ),
               const SizedBox(height: 30),
-              //! Carte avec suivi dynamique du curseur + tracé du parcours
               SizedBox(
                 height: 260,
                 width: double.infinity,
@@ -153,7 +143,8 @@ class _RunReelState extends State<RunReel> {
                   options: MapOptions(
                     center: _pos,
                     zoom: 15.0,
-                    interactiveFlags: InteractiveFlag.all,
+                    interactiveFlags: InteractiveFlag.none,
+                    keepAlive: true,
                   ),
                   children: [
                     TileLayer(
@@ -176,10 +167,11 @@ class _RunReelState extends State<RunReel> {
                           point: _pos,
                           builder:
                               (ctx) => Center(
+                              
                                 child: Container(
                                   width: 12,
                                   height: 12,
-                                  decoration: BoxDecoration(
+                                  decoration: const BoxDecoration(
                                     color: Colors.blue,
                                     shape: BoxShape.circle,
                                   ),
@@ -192,7 +184,6 @@ class _RunReelState extends State<RunReel> {
                 ),
               ),
               const SizedBox(height: 30),
-              //! Bouton pour terminer la course
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.grey[300],
@@ -212,10 +203,7 @@ class _RunReelState extends State<RunReel> {
                     vitesseMax: _vMax,
                     vitesseMoy: _vAvg,
                   );
-                  Navigator.pop(
-                    context,
-                    run,
-                  ); //! Retourne les infos de la course
+                  Navigator.pop(context, run);
                 },
                 child: const Text(
                   "Terminer la course",
