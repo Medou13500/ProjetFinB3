@@ -1,3 +1,4 @@
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'run_reel.dart';
 import 'historique_page.dart';
@@ -12,7 +13,8 @@ class StartRun extends StatefulWidget {
 }
 
 class _StartRunState extends State<StartRun> {
-  final List<RunHistory> _historiques = []; // stockage local
+  final List<RunHistory> _historiques = [];
+  final List<FlSpot> _performanceData = [];
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +25,7 @@ class _StartRunState extends State<StartRun> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            /* logo + bouton historique */
+            // Logo + bouton historique
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -32,10 +34,7 @@ class _StartRunState extends State<StartRun> {
                   style: TextButton.styleFrom(
                     backgroundColor: Colors.grey[300],
                     foregroundColor: Colors.black,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 10,
-                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),
                     ),
@@ -44,8 +43,7 @@ class _StartRunState extends State<StartRun> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder:
-                            (_) => HistoriquePage(historiques: _historiques),
+                        builder: (_) => HistoriquePage(historiques: _historiques),
                       ),
                     );
                   },
@@ -56,34 +54,74 @@ class _StartRunState extends State<StartRun> {
                 ),
               ],
             ),
-            const SizedBox(height: 50),
+            const SizedBox(height: 40),
+
+            // Bienvenue
             Text(
               "Bienvenue ${widget.email}",
               style: const TextStyle(fontSize: 20, color: Colors.white),
             ),
+            const SizedBox(height: 20),
+
+            // Graphique dynamique
+            if (_performanceData.isNotEmpty)
+              SizedBox(
+                height: 200,
+                child: LineChart(
+                  LineChartData(
+                    gridData: FlGridData(show: false),
+                    titlesData: FlTitlesData(show: false),
+                    borderData: FlBorderData(show: false),
+                    lineBarsData: [
+                      LineChartBarData(
+                        isCurved: true,
+                        color: Colors.white,
+                        barWidth: 3,
+                        dotData: FlDotData(show: true),
+                        belowBarData: BarAreaData(show: false),
+                        spots: _performanceData,
+                      ),
+                    ],
+                  ),
+                ),
+              )
+            else
+              const Text(
+                'Aucune donnée de performance.',
+                style: TextStyle(color: Colors.white),
+              ),
+
             const SizedBox(height: 40),
+
+            // Bouton Commencer la course
             Center(
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.grey[300],
                   foregroundColor: Colors.black,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 30,
-                    vertical: 15,
-                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),
                 ),
                 onPressed: () async {
-                  /* on attend le résultat de RunReel */
                   final result = await Navigator.push<RunHistory>(
                     context,
                     MaterialPageRoute(builder: (_) => const RunReel()),
                   );
 
                   if (result != null) {
-                    setState(() => _historiques.add(result));
+                    setState(() {
+                      _historiques.add(result);
+
+                      // ⚠️ On affiche ici la distance de chaque course dans le graphique
+                      _performanceData.add(
+                        FlSpot(
+                          _performanceData.length.toDouble(),
+                          result.distance, // ou result.vitesse, result.calories
+                        ),
+                      );
+                    });
                   }
                 },
                 child: const Text(
