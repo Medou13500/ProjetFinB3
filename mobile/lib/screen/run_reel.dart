@@ -1,3 +1,6 @@
+// ✅ Voici comment corriger et compléter `run_reel.dart`
+// pour bien retourner un RunHistory complet avec la distance
+
 import 'dart:async';
 import 'dart:math';
 import 'dart:math' as math show sin;
@@ -21,11 +24,13 @@ class _RunReelState extends State<RunReel> {
   int _sec = 0;
   int _cal = 0;
   double _vMax = 0, _vAvg = 0;
+  double _distance = 0; // Ajout pour calcul de distance
 
   LatLng _pos = LatLng(43.5287, 5.4456); // Aix-en-Provence
   List<LatLng> _simulatedPath = [];
   List<LatLng> _visitedPath = [];
   int _pathIndex = 0;
+  final Distance _distanceCalc = Distance();
 
   @override
   void initState() {
@@ -63,10 +68,13 @@ class _RunReelState extends State<RunReel> {
       }
 
       final nextPos = _simulatedPath[_pathIndex++];
+      final segmentDistance = _distanceCalc(_pos, nextPos);
+      _distance += segmentDistance / 1000; // Convertir en km
+
       _pos = nextPos;
       _visitedPath.add(_pos);
 
-      _mapController.move(_pos, 15.0); // ✅ Zoom fixe
+      _mapController.move(_pos, 15.0);
 
       if (mounted) setState(() {});
     });
@@ -100,38 +108,16 @@ class _RunReelState extends State<RunReel> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  Text(
-                    _time(),
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 26,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  Text(
-                    "$_cal calories",
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 26,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
+                  Text(_time(), style: const TextStyle(color: Colors.white, fontSize: 26, fontWeight: FontWeight.w600)),
+                  Text("$_cal calories", style: const TextStyle(color: Colors.white, fontSize: 26, fontWeight: FontWeight.w600)),
                 ],
               ),
               const SizedBox(height: 30),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  Text(
-                    "Vitesse max:\n${_vMax.toStringAsFixed(1)} km/h",
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(color: Colors.white, fontSize: 20),
-                  ),
-                  Text(
-                    "Vitesse moy:\n${_vAvg.toStringAsFixed(1)} km/h",
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(color: Colors.white, fontSize: 20),
-                  ),
+                  Text("Vitesse max:\n${_vMax.toStringAsFixed(1)} km/h", textAlign: TextAlign.center, style: const TextStyle(color: Colors.white, fontSize: 20)),
+                  Text("Vitesse moy:\n${_vAvg.toStringAsFixed(1)} km/h", textAlign: TextAlign.center, style: const TextStyle(color: Colors.white, fontSize: 20)),
                 ],
               ),
               const SizedBox(height: 30),
@@ -148,8 +134,7 @@ class _RunReelState extends State<RunReel> {
                   ),
                   children: [
                     TileLayer(
-                      urlTemplate:
-                          'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                      urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
                       subdomains: ['a', 'b', 'c'],
                     ),
                     PolylineLayer(
@@ -165,18 +150,13 @@ class _RunReelState extends State<RunReel> {
                       markers: [
                         Marker(
                           point: _pos,
-                          builder:
-                              (ctx) => Center(
-                              
-                                child: Container(
-                                  width: 12,
-                                  height: 12,
-                                  decoration: const BoxDecoration(
-                                    color: Colors.blue,
-                                    shape: BoxShape.circle,
-                                  ),
-                                ),
-                              ),
+                          builder: (ctx) => Center(
+                            child: Container(
+                              width: 12,
+                              height: 12,
+                              decoration: const BoxDecoration(color: Colors.blue, shape: BoxShape.circle),
+                            ),
+                          ),
                         ),
                       ],
                     ),
@@ -188,16 +168,12 @@ class _RunReelState extends State<RunReel> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.grey[300],
                   foregroundColor: Colors.black,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 30,
-                    vertical: 15,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                 ),
                 onPressed: () {
                   final run = RunHistory(
+                    distance: _distance,
                     duration: _time(),
                     calories: _cal,
                     vitesseMax: _vMax,
@@ -205,10 +181,7 @@ class _RunReelState extends State<RunReel> {
                   );
                   Navigator.pop(context, run);
                 },
-                child: const Text(
-                  "Terminer la course",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                ),
+                child: const Text("Terminer la course", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
               ),
             ],
           ),
