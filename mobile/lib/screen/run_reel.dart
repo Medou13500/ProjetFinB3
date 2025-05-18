@@ -1,5 +1,3 @@
-// ✅ Voici comment corriger et compléter `run_reel.dart`
-// pour bien retourner un RunHistory complet avec la distance
 
 import 'dart:async';
 import 'dart:math';

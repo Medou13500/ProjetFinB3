@@ -1,50 +1,41 @@
-# React + TypeScript + Vite
+# Page web 
+### Preparation du terrain
+- [ x ] préparé les composants enfant en fonction de la fonctionalité
+- [ x ] mise en place des routes depuis le composants parents
+### Accueil
+- [ ] le header (affichage du logo)
+- [ x ] le footer
+- [ ] texte de presentation
+- [ ] bouton de connexion
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+### Authentification
+- [ ] Connexion
+- [ ] Mots de passe oublié
 
-Currently, two official plugins are available:
+### Liste des utilisateurs
+- [ ] liste utilisateurs
+- [ ] input de recherche
+- [ ] connexion API ou BDD (a voir avec bastien)
+- [ ] boucler les card
+- [ ] afficher en bouclant les noms des user_id dans les cards 
+- [ ] afficher en bouclant les boutons details
+- [ ] faire un systeme de filtrage de card depuis le input
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### Dashboard 
+- [ ] boucler les cards
+- [ ] chaque card doit contenir distance/mois
+- [ ] chaque card doit contenir course/mois
+- [ ] chaque card doit contenir caloriePerdu/mois
+- [ ] chaque card doit contenir vitesseMax/mois
+- [ ] chaque card doit contenir vitesseMin/mois
+- [ ] chaque card doit Performance globale
+- [ ] connexion API ou BDD (voir avec bastien)
+- [ ] afficher les nom des user_id dans les cards 
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
-
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
-
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+# Graphiques bar
+- [ ] Distance / mois 
+- [ ] Nombre de courses / mois 
+- [ ] Performance globale 
+- [ ] Calories perdues / mois
+- [ ] Vitesse max / mois 
+- [ ] Vitesse min / mois 
