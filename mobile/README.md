@@ -1,16 +1,19 @@
-# mobile
+##  Mobile
 
-A new Flutter project.
+### Authentification
+- [x] Inscription
+- [x] Connexion
+- [x] Mots de passe oublié
 
-## Getting Started
+### Page d'accueil
+- [x] Affichage des données principales
+- [x] Graphique basé sur les performances
 
-This project is a starting point for a Flutter application.
+###  Course en temps réel
+- [x] Interface de la course
+- [x] Géolocalisation en temps réel
+- [x] Tracé du parcours sur la carte
 
-A few resources to get you started if this is your first Flutter project:
+###  Historique
+- [x] Liste des anciennes courses
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
