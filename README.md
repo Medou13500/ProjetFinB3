@@ -3,10 +3,10 @@
 - [ x ] préparé les composants enfant en fonction de la fonctionalité
 - [ x ] mise en place des routes depuis le composants parents
 ### Accueil
-- [ ] le header (affichage du logo)
+- [ x ] le header (affichage du logo)
 - [ x ] le footer
-- [ ] texte de presentation
-- [ ] bouton de connexion
+- [ x ] texte de presentation
+- [ x ] bouton de connexion
 
 ### Authentification
 - [ ] Connexion
