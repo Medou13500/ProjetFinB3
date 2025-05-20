@@ -54,7 +54,7 @@ const Accueil = () => {
                 fontFamily: 'Inter, sans-serif',
               }}
             >
-              Rapport
+              connexion
             </button>
           </>
         )}

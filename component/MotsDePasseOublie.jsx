@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 
-function Formulaire() {
-  const navigate = useNavigate(); // 👈 Hook React Router
+function form() {
+  const navigate = useNavigate();
 
   const Schema = Yup.object().shape({
     email: Yup.string()
@@ -17,24 +17,24 @@ function Formulaire() {
   });
 
   return (
-    // CONTENEUR GLOBAL CENTRÉ
+    // CONTENEUR FLEX POUR CENTRAGE GLOBAL
     <div
       className="container-fluid bg-white d-flex justify-content-center align-items-center"
       style={{
-        minHeight: 'calc(100vh - 120px)', // ajuste selon hauteur header/footer
+        minHeight: 'calc(100vh - 120px)', // ajuste selon header/footer
         paddingTop: '20px',
         paddingBottom: '20px',
       }}
     >
-      {/* BLOC FORMULAIRE */}
-      <div className="bg-info text-center p-4 rounded" style={{ width: '700px', height: 'auto' }}>
-        <h2 className="text-white mb-4">Connexion</h2>
+      {/* CONTENU DU FORM */}
+      <div className="bg-info text-center p-4 rounded" style={{ width: '700px', height: "auto" }}>
+        <h2 className="text-white mb-4">Mot de passe oublié</h2>
 
         <Formik
           initialValues={{ email: '', password: '' }}
           validationSchema={Schema}
           onSubmit={(values) => {
-            console.log("Connexion :", values);
+            console.log("Réinitialisation :", values);
           }}
         >
           {({ isSubmitting }) => (
@@ -54,26 +54,26 @@ function Formulaire() {
                   name="password"
                   type="password"
                   className="form-control rounded-pill text-center bg-light border-0 w-75 mx-auto"
-                  placeholder="mot de passe"
+                  placeholder="nouveau mot de passe"
                 />
                 <ErrorMessage name="password" component="div" className="form-text text-danger" />
               </div>
 
-              <div className="d-flex flex-column align-items-center gap-4 mb-2 mt-3">
+              <div className="d-flex flex-column align-items-center gap-3 mt-4">
                 <button
                   type="submit"
                   disabled={isSubmitting}
                   className="btn bg-light text-dark rounded-pill px-5 py-2"
                 >
-                  Envoyer
+                  Réinitialiser
                 </button>
 
                 <button
                   type="button"
-                  onClick={() => navigate('/mdpOublie')}
-                  className="btn bg-light text-dark rounded-pill px-5 py-2"
+                  onClick={() => navigate('/Connexion')}
+                  className="btn btn-outline-light rounded-pill px-4 py-2"
                 >
-                  mot de passe oublié
+                  Retour
                 </button>
               </div>
             </Form>
@@ -84,4 +84,4 @@ function Formulaire() {
   );
 }
 
-export default Formulaire;
+export default form;
