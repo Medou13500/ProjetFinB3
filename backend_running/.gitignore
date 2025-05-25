@@ -1,0 +1,42 @@
+# Fichiers Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Environnement virtuel
+venv/
+.env
+*.env
+
+# Paramètres Django ou clés sensibles
+*.sqlite3
+*.log
+*.pot
+local_settings.py
+firebase_auth/serviceAccountKey.json
+
+# Fichiers IDE
+.vscode/
+.idea/
+*.swp
+
+# Fichiers de test ou temporaires
+*.bak
+*.tmp
+.DS_Store
+Thumbs.db
+
+# Node (si tu as un frontend dans le même projet)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build / dist
+dist/
+build/
+*.egg-info/
+
+# Docker
+*.pid
+*.tar
