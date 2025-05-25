@@ -13,6 +13,9 @@ from collections import defaultdict
 from django.db.models.functions import ExtractWeek, ExtractYear
 from django.db.models.functions import ExtractMonth, ExtractYear
 from django.db.models import Count
+from django.http import HttpResponse
+import csv
+
 
 
 class RunningStatView(APIView):
@@ -379,4 +382,47 @@ class TopRunningStatsView(APIView):
             enriched_stats.sort(key=lambda x: x['distance_km'], reverse=True)
 
         return Response(enriched_stats[:limit])
+
+class ExportRunningStatsCSVView(APIView):
+    authentication_classes = [FirebaseAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        start = request.GET.get('start')
+        end = request.GET.get('end')
+        run_type = request.GET.get('run_type')
+
+        stats = RunningStat.objects.filter(user=request.user)
+
+        if start:
+            stats = stats.filter(date__gte=start)
+        if end:
+            stats = stats.filter(date__lte=end)
+        if run_type:
+            stats = stats.filter(run_type=run_type)
+
+        stats = stats.order_by('-date')
+
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="running_stats.csv"'
+
+        writer = csv.writer(response)
+        writer.writerow([
+            'Date', 'Distance (km)', 'Durée (min)', 'Type de course',
+            'Calories', 'Fréquence cardiaque moyenne', 'Note'
+        ])
+
+        for stat in stats:
+            writer.writerow([
+                stat.date.strftime("%Y-%m-%d"),
+                stat.distance_km,
+                stat.duration_minutes,
+                stat.run_type,
+                stat.calories or '',
+                stat.heart_rate_avg or '',
+                stat.note or ''
+            ])
+
+        return response
+
 

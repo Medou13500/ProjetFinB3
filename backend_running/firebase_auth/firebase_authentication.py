@@ -5,6 +5,7 @@ from firebase_admin import auth, credentials, initialize_app
 from rest_framework.authentication import BaseAuthentication
 from rest_framework.exceptions import AuthenticationFailed
 from django.db import IntegrityError
+from decouple import config
 
 # 🔁 Import du modèle local d'utilisateur Django
 from core.models import FirebaseUserModel  # adapte si ton modèle est ailleurs
@@ -24,10 +25,14 @@ class FirebaseUser:
 
 # 🚀 Initialisation unique de Firebase avec le fichier de clé
 if not firebase_admin._apps:
-    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-    cred_path = os.path.join(BASE_DIR, "serviceAccountKey.json")
-    cred = credentials.Certificate(cred_path)
-    initialize_app(cred)
+    cred_path = config("FIREBASE_CREDENTIAL_PATH", default=None)
+
+    if cred_path and os.path.exists(cred_path):
+        cred = credentials.Certificate(cred_path)
+        initialize_app(cred)
+        print("✅ Firebase initialisé")
+    else:
+        print("❌ Clé Firebase introuvable ou invalide.")
 
 
 # 🔐 Authentification DRF basée sur les ID tokens Firebase
@@ -59,10 +64,10 @@ class FirebaseAuthentication(BaseAuthentication):
             except FirebaseUserModel.DoesNotExist:
                 try:
                     user = FirebaseUserModel.objects.create(
-                    uid=uid,
-                    email=email,
-                    name=name
-                )
+                        uid=uid,
+                        email=email,
+                        name=name
+                    )
                 except IntegrityError as e:
                     raise AuthenticationFailed(f"Erreur lors de la création de l'utilisateur : {e}")
 
