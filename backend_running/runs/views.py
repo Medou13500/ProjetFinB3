@@ -14,6 +14,9 @@ from django.db.models.functions import ExtractWeek, ExtractYear
 from django.db.models.functions import ExtractMonth, ExtractYear
 from django.db.models import Count
 from django.http import HttpResponse
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
+
 import csv
 
 
@@ -21,9 +24,25 @@ import csv
 class RunningStatView(APIView):
     authentication_classes = [FirebaseAuthentication]
     permission_classes = [IsAuthenticated]
-    
 
-    # POST : Ajouter une statistique
+    @swagger_auto_schema(
+        operation_description="Ajoute une statistique de course.",
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=["distance_km", "duration_minutes"],
+            properties={
+                "distance_km": openapi.Schema(type=openapi.TYPE_NUMBER, description="Distance en kilomètres"),
+                "duration_minutes": openapi.Schema(type=openapi.TYPE_NUMBER, description="Durée en minutes"),
+                "run_type": openapi.Schema(type=openapi.TYPE_STRING, description="Type de course", default="training"),
+                "note": openapi.Schema(type=openapi.TYPE_STRING, description="Note optionnelle"),
+                "date": openapi.Schema(type=openapi.TYPE_STRING, format="date", description="Date de la course (YYYY-MM-DD)"),
+            },
+        ),
+        manual_parameters=[
+            openapi.Parameter('weight', openapi.IN_QUERY, description="Poids en kg pour le calcul des calories", type=openapi.TYPE_NUMBER)
+        ],
+        responses={200: "Stat enregistrée", 400: "Champs requis manquants ou invalide"},
+    )
     def post(self, request):
         distance = request.data.get("distance_km")
         duration = request.data.get("duration_minutes")
@@ -31,10 +50,9 @@ class RunningStatView(APIView):
         note = request.data.get("note", "")
         date_str = request.data.get("date")
 
-
         if not distance or not duration:
             return Response({"error": "Champs requis manquants."}, status=400)
-        
+
         try:
             date = datetime.strptime(date_str, "%Y-%m-%d").date() if date_str else timezone.now().date()
         except ValueError:
@@ -53,7 +71,7 @@ class RunningStatView(APIView):
             poids = float(request.GET.get("weight", 70))
         except ValueError:
             poids = 70
-        
+
         calories = float(distance) * poids * 1.036
 
         return Response({
@@ -67,16 +85,23 @@ class RunningStatView(APIView):
             "user": stat.user.email,
         })
 
-    # GET : Récupérer toutes les stats de l'utilisateur
+    @swagger_auto_schema(
+        operation_description="Récupère toutes les statistiques de course avec filtres optionnels.",
+        manual_parameters=[
+            openapi.Parameter('type', openapi.IN_QUERY, description="Filtrer par type de course", type=openapi.TYPE_STRING),
+            openapi.Parameter('start', openapi.IN_QUERY, description="Date de début (YYYY-MM-DD)", type=openapi.TYPE_STRING),
+            openapi.Parameter('end', openapi.IN_QUERY, description="Date de fin (YYYY-MM-DD)", type=openapi.TYPE_STRING),
+            openapi.Parameter('weight', openapi.IN_QUERY, description="Poids pour le calcul des calories (optionnel)", type=openapi.TYPE_NUMBER),
+        ],
+        responses={200: RunningStatSerializer(many=True)}
+    )
     def get(self, request):
         stats = RunningStat.objects.filter(user=request.user)
 
-        # Filtrage par type
         run_type = request.GET.get('type')
         if run_type:
             stats = stats.filter(run_type=run_type)
 
-        # Filtrage par date
         start_date = request.GET.get('start')
         end_date = request.GET.get('end')
 
@@ -91,7 +116,6 @@ class RunningStatView(APIView):
             poids = float(request.GET.get("weight", 70))
         except ValueError:
             poids = 70
-        
 
         serializer = RunningStatSerializer(stats, many=True, context={"weight": poids})
         return Response(serializer.data)
@@ -101,7 +125,17 @@ class RunningStatDetailView(APIView):
     authentication_classes = [FirebaseAuthentication]
     permission_classes = [IsAuthenticated]
 
-    # GET : Récupérer une stat spécifique
+    @swagger_auto_schema(
+        operation_description="Récupérer une statistique de course spécifique par ID.",
+        manual_parameters=[
+            openapi.Parameter(
+                'weight',
+                openapi.IN_QUERY,
+                description="Poids de l'utilisateur en kg (utilisé pour l'estimation des calories)",
+                type=openapi.TYPE_NUMBER
+            )
+        ]
+    )
     def get(self, request, stat_id):
         stat = get_object_or_404(RunningStat, id=stat_id, user=request.user)
 
@@ -109,12 +143,15 @@ class RunningStatDetailView(APIView):
             poids = float(request.GET.get("weight", 70))
         except ValueError:
             poids = 70
-    
-        serializer = RunningStatSerializer(stat, context={"weight": poids})
 
+        serializer = RunningStatSerializer(stat, context={"weight": poids})
         return Response(serializer.data)
 
-    # PUT : Modifier une stat
+    @swagger_auto_schema(
+        operation_description="Met à jour une statistique de course existante.",
+        request_body=RunningStatSerializer,
+        responses={200: RunningStatSerializer()}
+    )
     def put(self, request, stat_id):
         stat = get_object_or_404(RunningStat, id=stat_id, user=request.user)
         serializer = RunningStatSerializer(stat, data=request.data, partial=True)
@@ -123,7 +160,9 @@ class RunningStatDetailView(APIView):
             return Response(serializer.data)
         return Response(serializer.errors, status=400)
 
-    # DELETE : Supprimer une stat
+    @swagger_auto_schema(
+        operation_description="Supprime une statistique de course spécifique."
+    )
     def delete(self, request, stat_id):
         stat = get_object_or_404(RunningStat, id=stat_id, user=request.user)
         stat.delete()
@@ -134,7 +173,18 @@ class RunningStatSummaryView(APIView):
     authentication_classes = [FirebaseAuthentication]
     permission_classes = [IsAuthenticated]
 
-    # GET : Récupérer le résumé des stats
+    @swagger_auto_schema(
+        operation_description="Récupère le résumé global des statistiques de course de l'utilisateur.",
+        manual_parameters=[
+            openapi.Parameter(
+                'weight',
+                openapi.IN_QUERY,
+                description="Poids de l'utilisateur en kg (utilisé pour estimer les calories brûlées)",
+                type=openapi.TYPE_NUMBER,
+                required=False
+            )
+        ]
+    )
     def get(self, request):
         stats = RunningStat.objects.filter(user=request.user)
 
@@ -146,42 +196,65 @@ class RunningStatSummaryView(APIView):
         session_count = stats.count()
         avg_distance = stats.aggregate(Avg('distance_km'))['distance_km__avg'] or 0
         avg_duration = stats.aggregate(Avg('duration_minutes'))['duration_minutes__avg'] or 0
+
         try:
-            poids = float(request.GET.get("weight", 70))  # récupère ?weight=75 sinon 70
+            poids = float(request.GET.get("weight", 70))
         except ValueError:
             poids = 70
+
         calories = total_distance * poids * 1.036
-
-
-        # vitesse moyenne (km/h) et allure (min/km)
         speed_avg = (total_distance / total_duration * 60) if total_duration else 0
         pace_avg  = (total_duration / total_distance) if total_distance else 0
 
         return Response({
-            "total_distance_km":     round(total_distance, 2),
-            "total_duration_minutes":round(total_duration, 2),
-            "number_of_sessions":    session_count,
-            "average_distance_km":   round(avg_distance, 2),
+            "total_distance_km": round(total_distance, 2),
+            "total_duration_minutes": round(total_duration, 2),
+            "number_of_sessions": session_count,
+            "average_distance_km": round(avg_distance, 2),
             "average_duration_minutes": round(avg_duration, 2),
-            "average_speed_kmh":     round(speed_avg, 2),
+            "average_speed_kmh": round(speed_avg, 2),
             "average_pace_min_per_km": round(pace_avg, 2),
             "estimated_calories_burned": round(calories, 2),
             "weight_used_kg": poids
-
         })
     
 class RunningStatMonthlyStatsView(APIView):
     authentication_classes = [FirebaseAuthentication]
     permission_classes = [IsAuthenticated]
 
+    @swagger_auto_schema(
+        operation_description="Récupère les statistiques mensuelles de course de l'utilisateur.",
+        manual_parameters=[
+            openapi.Parameter(
+                'start',
+                openapi.IN_QUERY,
+                description="Date de début (format YYYY-MM-DD)",
+                type=openapi.TYPE_STRING,
+                required=False
+            ),
+            openapi.Parameter(
+                'end',
+                openapi.IN_QUERY,
+                description="Date de fin (format YYYY-MM-DD)",
+                type=openapi.TYPE_STRING,
+                required=False
+            ),
+            openapi.Parameter(
+                'run_type',
+                openapi.IN_QUERY,
+                description="Filtrer par type de course (ex: Running, Steps, etc.)",
+                type=openapi.TYPE_STRING,
+                required=False
+            )
+        ]
+    )
     def get(self, request):
-
         start = request.GET.get('start')
         end = request.GET.get('end')
         run_type = request.GET.get('run_type')
 
         stats = RunningStat.objects.filter(user=request.user)
-        
+
         if start:
             stats = stats.filter(date__gte=start)
         if end:
@@ -199,7 +272,7 @@ class RunningStatMonthlyStatsView(APIView):
         })
 
         for stat in stats:
-            month_key = stat.date.strftime("%Y-%m")  # ex: "2025-05"
+            month_key = stat.date.strftime("%Y-%m")
             monthly_data[month_key]["total_distance_km"] += stat.distance_km
             monthly_data[month_key]["total_duration_minutes"] += stat.duration_minutes
             monthly_data[month_key]["session_count"] += 1
@@ -209,7 +282,7 @@ class RunningStatMonthlyStatsView(APIView):
             distance = data["total_distance_km"]
             duration = data["total_duration_minutes"]
             speed = (distance / duration * 60) if duration else 0
-            calories = round(distance * 60, 2)  # estimation simplifiée (60 kcal/km)
+            calories = round(distance * 60, 2)
 
             response.append({
                 "month": month,
@@ -226,13 +299,37 @@ class RunningStatWeeklyStatsView(APIView):
     authentication_classes = [FirebaseAuthentication]
     permission_classes = [IsAuthenticated]
 
+    @swagger_auto_schema(
+        operation_description="Récupère les statistiques hebdomadaires de course de l'utilisateur.",
+        manual_parameters=[
+            openapi.Parameter(
+                'start',
+                openapi.IN_QUERY,
+                description="Date de début (YYYY-MM-DD)",
+                type=openapi.TYPE_STRING,
+                required=False
+            ),
+            openapi.Parameter(
+                'end',
+                openapi.IN_QUERY,
+                description="Date de fin (YYYY-MM-DD)",
+                type=openapi.TYPE_STRING,
+                required=False
+            ),
+            openapi.Parameter(
+                'run_type',
+                openapi.IN_QUERY,
+                description="Filtrer par type de course",
+                type=openapi.TYPE_STRING,
+                required=False
+            )
+        ]
+    )
     def get(self, request):
         stats = RunningStat.objects.filter(user=request.user)
         start = request.GET.get('start')
         end = request.GET.get('end')
         run_type = request.GET.get('run_type')
-
-        stats = RunningStat.objects.filter(user=request.user)
 
         if start:
             stats = stats.filter(date__gte=start)
@@ -250,7 +347,6 @@ class RunningStatWeeklyStatsView(APIView):
             session_count=Count('id'),
         ).order_by('year', 'week')
 
-        # Ajout des calculs de vitesse et allure moyennes
         results = []
         for entry in weekly_stats:
             duration = entry['total_duration_minutes']
@@ -268,6 +364,14 @@ class ChallengeCreateView(APIView):
     authentication_classes = [FirebaseAuthentication]
     permission_classes = [IsAuthenticated]
 
+    @swagger_auto_schema(
+        operation_description="Créer un nouveau défi personnalisé pour l'utilisateur connecté.",
+        request_body=ChallengeSerializer,
+        responses={
+            201: openapi.Response("Défi créé avec succès", ChallengeSerializer),
+            400: "Erreur de validation ou utilisateur inconnu"
+        }
+    )
     def post(self, request):
         user_email = getattr(request.user, "email", None)
         if not user_email:
@@ -283,6 +387,13 @@ class ChallengeListView(APIView):
     authentication_classes = [FirebaseAuthentication]
     permission_classes = [IsAuthenticated]
 
+    @swagger_auto_schema(
+        operation_description="Récupère la liste des défis de l'utilisateur avec progression et statut calculés.",
+        responses={
+            200: "Liste des défis avec progression",
+            400: "Utilisateur non reconnu"
+        }
+    )
     def get(self, request):
         user_email = getattr(request.user, "email", None)
         if not user_email:
@@ -326,12 +437,28 @@ class ChallengeDetailView(APIView):
     authentication_classes = [FirebaseAuthentication]
     permission_classes = [IsAuthenticated]
 
+    @swagger_auto_schema(
+        operation_description="Récupère les détails d’un défi spécifique par ID.",
+        responses={
+            200: openapi.Response("Défi récupéré", ChallengeSerializer),
+            404: "Défi non trouvé ou non autorisé"
+        }
+    )
     def get(self, request, challenge_id):
         user_email = getattr(request.user, "email", None)
         challenge = get_object_or_404(Challenge, id=challenge_id, user_email=user_email)
         serializer = ChallengeSerializer(challenge)
         return Response(serializer.data)
 
+    @swagger_auto_schema(
+        operation_description="Met à jour un défi spécifique.",
+        request_body=ChallengeSerializer,
+        responses={
+            200: openapi.Response("Défi mis à jour", ChallengeSerializer),
+            400: "Erreur de validation",
+            404: "Défi introuvable"
+        }
+    )
     def put(self, request, challenge_id):
         user_email = getattr(request.user, "email", None)
         challenge = get_object_or_404(Challenge, id=challenge_id, user_email=user_email)
@@ -341,6 +468,13 @@ class ChallengeDetailView(APIView):
             return Response(serializer.data)
         return Response(serializer.errors, status=400)
 
+    @swagger_auto_schema(
+        operation_description="Supprime un défi spécifique.",
+        responses={
+            204: "Défi supprimé avec succès",
+            404: "Défi introuvable"
+        }
+    )
     def delete(self, request, challenge_id):
         user_email = getattr(request.user, "email", None)
         challenge = get_object_or_404(Challenge, id=challenge_id, user_email=user_email)
@@ -351,6 +485,28 @@ class TopRunningStatsView(APIView):
     authentication_classes = [FirebaseAuthentication]
     permission_classes = [IsAuthenticated]
 
+    @swagger_auto_schema(
+        operation_description="Affiche les meilleures performances de l'utilisateur selon un critère (distance, vitesse ou calories).",
+        manual_parameters=[
+            openapi.Parameter(
+                'sort_by',
+                openapi.IN_QUERY,
+                description="Critère de tri : 'distance' (défaut), 'speed', ou 'calories'",
+                type=openapi.TYPE_STRING,
+                required=False
+            ),
+            openapi.Parameter(
+                'limit',
+                openapi.IN_QUERY,
+                description="Nombre maximum de résultats à retourner (défaut : 5)",
+                type=openapi.TYPE_INTEGER,
+                required=False
+            )
+        ],
+        responses={
+            200: "Liste triée des meilleures statistiques de course"
+        }
+    )
     def get(self, request):
         criterion = request.GET.get('sort_by', 'distance')  # 'distance', 'speed', or 'calories'
         limit = int(request.GET.get('limit', 5))
@@ -378,7 +534,7 @@ class TopRunningStatsView(APIView):
             enriched_stats.sort(key=lambda x: x['average_speed_kmh'], reverse=True)
         elif criterion == 'calories':
             enriched_stats.sort(key=lambda x: x.get('calories', 0), reverse=True)
-        else:  # distance par défaut
+        else:
             enriched_stats.sort(key=lambda x: x['distance_km'], reverse=True)
 
         return Response(enriched_stats[:limit])
@@ -387,6 +543,38 @@ class ExportRunningStatsCSVView(APIView):
     authentication_classes = [FirebaseAuthentication]
     permission_classes = [IsAuthenticated]
 
+    @swagger_auto_schema(
+        operation_description="Exporte les statistiques de course de l'utilisateur en fichier CSV téléchargeable.",
+        manual_parameters=[
+            openapi.Parameter(
+                'start',
+                openapi.IN_QUERY,
+                description="Date de début (YYYY-MM-DD)",
+                type=openapi.TYPE_STRING,
+                required=False
+            ),
+            openapi.Parameter(
+                'end',
+                openapi.IN_QUERY,
+                description="Date de fin (YYYY-MM-DD)",
+                type=openapi.TYPE_STRING,
+                required=False
+            ),
+            openapi.Parameter(
+                'run_type',
+                openapi.IN_QUERY,
+                description="Filtrer par type de course",
+                type=openapi.TYPE_STRING,
+                required=False
+            )
+        ],
+        responses={
+            200: openapi.Response(
+                description="Fichier CSV des statistiques de course",
+                schema=openapi.TYPE_FILE
+            )
+        }
+    )
     def get(self, request):
         start = request.GET.get('start')
         end = request.GET.get('end')
