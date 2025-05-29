@@ -9,8 +9,8 @@
 - [ x ] bouton de connexion
 
 ### Authentification
-- [ ] Connexion
-- [ ] Mots de passe oublié
+- [ x ] Connexion
+- [ x ] Mots de passe oublié
 
 ### Liste des utilisateurs
 - [ ] liste utilisateurs

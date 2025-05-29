@@ -28,7 +28,7 @@ if not firebase_admin._apps:
     cred_path = config("FIREBASE_CREDENTIAL_PATH", default=None)
 
     if cred_path and os.path.exists(cred_path):
-        cred = credentials.Certificate(cred_path)
+        cred = credentials.Certificate("backend_running/firebase_auth/serviceAccountKey.json")
         initialize_app(cred)
         print("✅ Firebase initialisé")
     else:
