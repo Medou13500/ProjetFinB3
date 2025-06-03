@@ -12,6 +12,9 @@ class FirebaseUserModel(AbstractBaseUser):
     uid = models.CharField(max_length=128, unique=True)  # UID Firebase
     email = models.EmailField(blank=True, null=True, unique=True)
     name = models.CharField(max_length=255, blank=True, null=True)
+    username = models.CharField(max_length=150, blank=True, null=True)
+    first_name = models.CharField(max_length=150, blank=True, null=True)
+    last_name = models.CharField(max_length=150, blank=True, null=True)
 
     objects = FirebaseUserManager()
 
