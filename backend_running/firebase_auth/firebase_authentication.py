@@ -54,6 +54,11 @@ class FirebaseAuthentication(BaseAuthentication):
         uid = decoded_token.get('uid')
         email = decoded_token.get('email')
         name = decoded_token.get('name')
+        
+        # 👇 Extraction de first_name, last_name, username depuis le name complet
+        username = name.split()[0] if name else ''
+        first_name = name.split()[0] if name else ''
+        last_name = ' '.join(name.split()[1:]) if name and len(name.split()) > 1 else ''
 
         # 🔄 Créer ou récupérer l'utilisateur Django lié à Firebase UID
         try:
@@ -66,7 +71,10 @@ class FirebaseAuthentication(BaseAuthentication):
                     user = FirebaseUserModel.objects.create(
                         uid=uid,
                         email=email,
-                        name=name
+                        name=name,
+                        username=username,
+                        first_name=first_name,
+                        last_name=last_name
                     )
                 except IntegrityError as e:
                     raise AuthenticationFailed(f"Erreur lors de la création de l'utilisateur : {e}")
