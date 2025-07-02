@@ -1,7 +1,7 @@
 import requests
 
 API_KEY = "AIzaSyC79Rhe2OwqpEgrt3uACIM0s73xWs63bDw"
-EMAIL = "mehdybouzid8@gmail.com"
+EMAIL = "mehdybouzid9@gmail.com"
 PASSWORD = "Medou13500!"
 
 url = f"https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key={API_KEY}"

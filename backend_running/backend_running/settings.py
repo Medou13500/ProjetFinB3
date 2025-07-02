@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
-
+from fastapi.middleware.cors import CORSMiddleware
 from pathlib import Path
 from dotenv import load_dotenv
 import os
@@ -34,12 +34,14 @@ ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",")
 # Application definition
 
 INSTALLED_APPS = [
+    'corsheaders',  # Ajoute ici
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_extensions',
     'drf_yasg',
 
     # Apps projet
@@ -51,6 +53,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware', 
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -137,3 +140,34 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+CORS_ALLOW_ALL_HEADERS = True  # facultatif mais utile en dev
+
+
+CORS_ALLOW_METHODS = [
+    "DELETE",
+    "GET",
+    "OPTIONS",  # ← très important pour corriger l'erreur que tu as
+    "PATCH",
+    "POST",
+    "PUT",
+]
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",   # Si tu utilises Vite
+    "http://localhost:3000",   # Si tu utilises React (create-react-app)
+    "http://localhost:8080",
+    "http://localhost:5174",
+    "http://localhost:5176"  # Si tu as un autre outil (par ex Vue CLI)
+]
+
+    
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'firebase_auth.firebase_authentication.FirebaseAuthentication',  # ta classe d’auth perso
+        'rest_framework.authentication.SessionAuthentication',  # facultatif, si tu veux garder la session classique
+        'rest_framework.authentication.BasicAuthentication',    # facultatif aussi
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',  # par défaut, restreint aux utilisateurs authentifiés
+    ],
+}
