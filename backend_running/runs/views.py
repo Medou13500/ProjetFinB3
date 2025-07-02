@@ -16,9 +16,8 @@ from django.db.models import Count
 from django.http import HttpResponse
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
-
 import csv
-
+from datetime import datetime
 
 
 class RunningStatView(APIView):
@@ -66,7 +65,6 @@ class RunningStatView(APIView):
             note=note,
             date=date
         )
-
         try:
             poids = float(request.GET.get("weight", 70))
         except ValueError:
@@ -218,6 +216,7 @@ class RunningStatSummaryView(APIView):
             "weight_used_kg": poids
         })
     
+
 class RunningStatMonthlyStatsView(APIView):
     authentication_classes = [FirebaseAuthentication]
     permission_classes = [IsAuthenticated]
@@ -282,10 +281,10 @@ class RunningStatMonthlyStatsView(APIView):
             distance = data["total_distance_km"]
             duration = data["total_duration_minutes"]
             speed = (distance / duration * 60) if duration else 0
-            calories = round(distance * 60, 2)
+            calories = round(distance * 60, 2)  # Ajuste si tu veux un calcul plus précis
 
             response.append({
-                "month": month,
+                "month": datetime.strptime(month, "%Y-%m").strftime("%B %Y"),
                 "total_distance_km": round(distance, 2),
                 "total_duration_minutes": round(duration, 2),
                 "session_count": data["session_count"],
@@ -293,6 +292,7 @@ class RunningStatMonthlyStatsView(APIView):
                 "estimated_calories": calories,
             })
 
+        print("📊 DATA API :", response)
         return Response(response)
 
 class RunningStatWeeklyStatsView(APIView):
